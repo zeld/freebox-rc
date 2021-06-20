@@ -1,0 +1,240 @@
+<!DOCTYPE HTML>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Télécommande Freebox V5</title>
+<style>
+body {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+table {
+  width: 100%;
+  background-color: #b3b6b7;
+  margin: 0;
+  padding: 0;
+}
+tr {
+  height: 8em;
+}
+td {
+  touch-action: manipulation; /* prevent double tap zoom on touch device */
+  font-family: 'verdana';
+  font-size: 5em;
+  text-align: center;
+  color: white;
+  width: 33.33%;
+}
+td.red {
+  background: #a93226;
+}
+td.green {
+  background: #229954;
+}
+td.yellow {
+  background: #d4ac0d;
+}
+td.blue {
+  background: #2e86c1;
+}
+td.home {
+  color: #a93226;
+}
+td.caption {
+  font-size: 3em;
+}
+td.power {
+  color: #a93226;
+}
+</style>
+<script>
+// Documentation of freebox virtual remote control HTTP API:
+// - https://dev.freebox.fr/bugs/task/4327
+// - https://dev.freebox.fr/bugs/task/30276
+// Note: this API is deprecates
+
+// URL of freebox multimedia devise (HD1)
+var freebox_hd_rc_url="http://hd1.freebox.fr/pub/remote_control";
+
+// Duration of vibration feedback on key pressed on mobile device
+var vibration_duration = 10; // in ms
+
+// Configuration of the remote control code
+// The code is stored as is (in clear) in browser local cache (localStorage)
+function configureCode() {
+  var localStorage = window.localStorage;
+  var oldCode = localStorage.getItem("code");
+  if (oldCode == null) {
+    oldCode = "";
+  }
+  var newCode = prompt("Entrer le code télécommande (8 chiffres)", oldCode);
+  if (newCode != null)
+    localStorage.setItem("code", newCode);
+}
+
+// Retrieval of configured remote controle code
+function getCode() {
+  var localStorage = window.localStorage;
+  var code = localStorage.getItem("code");
+  while (code == null) {
+    configureCode();
+    code = localStorage.getItem("code");
+  }
+  return code;
+}
+
+// Send a single virtual key to multimedia device
+// Parameter:
+// - key code
+function sendKey(key) {
+    window.navigator.vibrate(vibration_duration); // haptic feedback
+    sendRequest(key, false);
+}
+
+// Send a virtual key to the mutimedia device using a HTTP request
+// Parameters
+// - key code
+// - flag for long press (optionel)
+function sendRequest(key, long) {
+    var url = freebox_hd_rc_url + "?code=" + getCode() + "&key=" + key;
+    if (long)
+      url += "&long=true";
+    new Image().src = url; // send url using an image to prevent CORS issues
+    //var xmlHttp = new XMLHttpRequest();
+    //xmlHttp.open( "GET", url, true ); // true for asynchronous request
+    //xmlHttp.send( null ); // Fire and forget (no callback)
+}
+
+// Buffer for storage of multiple numeric keys pressed rapidely (ex: channel 14)
+var rapidKeyPressBuffer = "";
+// Maximum inverval between two rapid key press. After this delay all stored key pressed are sent to multimedia device.
+var rapidKeyPressInterval = 500;
+// Timeout for sending stored keys
+var rapidKeyPressTimeout;
+
+// Send a numeric key. If several keys are pressed rapidely, they are stored in a buffer before being sent to the multimedia device
+function sendNumericKey(key) {
+    window.navigator.vibrate(vibration_duration); // haptic feedback
+    // Storage of the key in the buffer
+    rapidKeyPressBuffer = rapidKeyPressBuffer + key;
+    // Cancellation of previous timeout
+    window.clearTimeout(rapidKeyPressTimeout);
+    // New timeout to send buffered keys after the delay is reached
+    rapidKeyPressTimeout = window.setTimeout(sendrapidKeyPressBuffer, rapidKeyPressInterval);
+}
+
+// Send the buffer of stored numeric keys to the multimedia device
+function sendrapidKeyPressBuffer() {
+  if (rapidKeyPressBuffer.length == 1) {
+    // A single key pas pressed => immediate sending
+    sendRequest(rapidKeyPressBuffer, false); // short
+  } else {
+    // Sending a sequence of keys, the first one being sent in long mode
+    for (var i = 0; i < rapidKeyPressBuffer.length; i++) {
+      key = rapidKeyPressBuffer.substring(i, i + 1);
+      if (i == 0) {
+        sendRequest(key, true); // long mode for first key
+      } else {
+        sendRequest(key, false); // short mode for subsequent keys
+      }
+    }
+  }
+  rapidKeyPressBuffer = "";
+}
+</script>
+</head>
+<body>
+<!--
+Non-implemented keys:
+- tv: switch peritel
+- back: touche retour jaune (effacement)
+- mail: messagerie
+- pip: incrustation video
+- media
+- help
+Keys added afterwards?
+- replay
+- vod
+- whatson
+- records
+- media
+- youtube
+- radios
+- canalvod
+- netflix
+-->
+<table>
+ <tr>
+  <td onclick="javascript:configureCode()">≡</td>
+  <td></td>
+  <td onclick="javascript:sendKey('power');" class="power">◯</td>
+ </tr>
+ <tr>
+  <td onclick="javascript:sendNumericKey('1');">1</td>
+  <td onclick="javascript:sendNumericKey('2');">2</td>
+  <td onclick="javascript:sendNumericKey('3');">3</td>
+ </tr>
+ <tr>
+  <td onclick="javascript:sendNumericKey('4');">4</td>
+  <td onclick="javascript:sendNumericKey('5');">5</td>
+  <td onclick="javascript:sendNumericKey('6');">6</td>
+ </tr>
+ <tr>
+  <td onclick="javascript:sendNumericKey('7');">7</td>
+  <td onclick="javascript:sendNumericKey('8');">8</td>
+  <td onclick="javascript:sendNumericKey('9');">9</td>
+ </tr>
+ <tr>
+  <td onclick="javascript:sendKey('prgm_dec');">-</td>
+  <td onclick="javascript:sendNumericKey('0');">0</td>
+  <td onclick="javascript:sendKey('prgm_inc');">+</td>
+ </tr>
+ <tr>
+  <td onclick="javascript:sendKey('vol_dec');">🔉</td>
+  <td onclick="javascript:sendKey('mute');">🔇</td>
+  <td onclick="javascript:sendKey('vol_inc');">🔊</td>
+ </tr>
+ <tr>
+  <td onclick="javascript:sendKey('list');" class="caption">liste</td>
+  <td onclick="javascript:sendKey('epg');" class="caption">guide</td>
+  <td onclick="javascript:sendKey('swap');" class="caption">⇄</td>
+ </tr>
+ <tr>
+  <td onclick="javascript:sendKey('info');" class="caption">info</td>
+  <td onclick="javascript:sendKey('home');" class="home">Free</td>
+  <td onclick="javascript:sendKey('options');" class="caption">options</td>
+ </tr>
+ <tr>
+  <td onclick="javascript:sendKey('B');" class="red"> </td>
+  <td onclick="javascript:sendKey('up');">▲</td>
+  <td onclick="javascript:sendKey('A');" class="green"></td>
+ </tr>
+ <tr>
+  <td onclick="javascript:sendKey('left');">◀</td>
+  <td onclick="javascript:sendKey('ok');">OK</td>
+  <td onclick="javascript:sendKey('right');">▶</td>
+ </tr>
+ <tr>
+  <td onclick="javascript:sendKey('Y');" class="yellow"> </td>
+  <td onclick="javascript:sendKey('down');">▼</td>
+  <td onclick="javascript:sendKey('X');" class="blue"> </td>
+ </tr>
+ <tr>
+  <td onclick="javascript:sendKey('prev');">⏮</td>
+  <td onclick="javascript:sendKey('play');">⏯</td>
+  <td onclick="javascript:sendKey('next');">⏭</td>
+ </tr>
+ <tr>
+  <td onclick="javascript:sendKey('bwd');">⏪</td>
+  <td onclick="javascript:sendKey('stop');">⏹</td>
+  <td onclick="javascript:sendKey('fwd');">⏩</td>
+ </tr>
+ <tr>
+  <td onclick=""></td>
+  <td onclick="javascript:sendKey('rec');">⏺</td>
+  <td onclick=""></td>
+ </tr>
+</table>
+</body>
+</html>
