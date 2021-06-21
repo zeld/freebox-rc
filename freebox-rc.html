@@ -18,8 +18,10 @@ table {
 tr {
   height: 8em;
 }
+/* Tab cells are the remote control buttons */
 td {
-  touch-action: manipulation; /* prevent double tap zoom on touch device */
+  touch-action: manipulation; /* Prevent double tap zoom on touch device */
+  user-select: none; /* Prevent text selection on double click/tap */
   font-family: 'verdana';
   font-size: 5em;
   text-align: center;
