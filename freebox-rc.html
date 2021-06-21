@@ -103,7 +103,10 @@ function sendRequest(key, long) {
     var url = freebox_hd_rc_url + "?code=" + getCode() + "&key=" + key;
     if (long)
       url += "&long=true";
-    new Image().src = url + "&t=" + new Date().getTime(); // hackish way to send the GET request and prevent CORS issues. A timestamp is added to bypass browser cache;
+    // Hackish way to send a GET request and prevent Mixed-Content request from being blocked by the browser
+    // This hack does not work anymore with Chrome 81+
+    // Note: a timestamp is added to bypass browser cache.
+    new Image().src = url + "&t=" + new Date().getTime();
     //var xmlHttp = new XMLHttpRequest();
     //xmlHttp.open( "GET", url, true ); // true for asynchronous request
     //xmlHttp.send( null ); // Fire and forget (no callback)
