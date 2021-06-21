@@ -51,11 +51,12 @@ td.power {
 <script>
 // Documentation of freebox virtual remote control HTTP API:
 // - https://dev.freebox.fr/bugs/task/4327
+// - https://dev.freebox.fr/bugs/task/10156
 // - https://dev.freebox.fr/bugs/task/30276
-// Note: this API is deprecates
+// Note: this API is deprecated
 
 // URL of freebox multimedia devise (HD1)
-var freebox_hd_rc_url="http://hd1.freebox.fr/pub/remote_control";
+var freebox_hd_rc_url="http://hd1.freebox.fr/pub/remote_control"; // HTTPS not available on Freebox V5
 
 // Duration of vibration feedback on key pressed on mobile device
 var vibration_duration = 10; // in ms
@@ -126,20 +127,15 @@ function sendNumericKey(key) {
 
 // Send the buffer of stored numeric keys to the multimedia device
 function sendrapidKeyPressBuffer() {
-  if (rapidKeyPressBuffer.length == 1) {
-    // A single key pas pressed => immediate sending
-    sendRequest(rapidKeyPressBuffer, false); // short
-  } else {
-    // Sending a sequence of keys, the first one being sent in long mode
-    for (var i = 0; i < rapidKeyPressBuffer.length; i++) {
-      key = rapidKeyPressBuffer.substring(i, i + 1);
-      if (i == 0) {
-        sendRequest(key, true); // long mode for first key
-      } else {
-        sendRequest(key, false); // short mode for subsequent keys
-      }
-    }
+  // Sending first keys in long press mode
+  while (rapidKeyPressBuffer.length > 1) {
+    key = rapidKeyPressBuffer.substring(0, 1);
+    sendRequest(key, true); // long mode for first keys
+    rapidKeyPressBuffer = rapidKeyPressBuffer.substring(1);
   }
+  // Sending last key in normal mode
+  sendRequest(rapidKeyPressBuffer, false);
+  // Reset buffer
   rapidKeyPressBuffer = "";
 }
 </script>
