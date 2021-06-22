@@ -105,7 +105,7 @@ function sendRequest(key, long) {
   var url = freebox_hd_rc_url + "?code=" + getCode() + "&key=" + key;
   if (long)
     url += "&long=true";
-  if (window.location.protocol != "https:") {
+  if (window.location.protocol == "https:") {
     // Need to send a HTTP request (Freebox V5 API does not support HTTPS) from a HTTPS site, which is bad
     // and blocked by the brower. A hackish workaround is to send a GET request using image loading. This
     // prevents Mixed-Content request from being blocked by the browser.
