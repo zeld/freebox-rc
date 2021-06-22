@@ -91,8 +91,10 @@ function getCode() {
 // Parameter:
 // - key code
 function sendKey(key) {
+  if (window.navigator.vibrate) {
     window.navigator.vibrate(vibration_duration); // haptic feedback
-    sendRequest(key, false);
+  }
+  sendRequest(key, false);
 }
 
 // Send a virtual key to the mutimedia device using a HTTP request
@@ -100,21 +102,21 @@ function sendKey(key) {
 // - key code
 // - flag for long press (optionel)
 function sendRequest(key, long) {
-    var url = freebox_hd_rc_url + "?code=" + getCode() + "&key=" + key;
-    if (long)
-        url += "&long=true";
-    if (window.location.protocol != "https:") {
-        // Need to send a HTTP request (Freebox V5 API does not support HTTPS) from a HTTPS site, which is bad
-        // and blocked by the brower. A hackish workaround is to send a GET request using image loading. This
-        // prevents Mixed-Content request from being blocked by the browser.
-        // This hack does not work anymore with Chrome 81+
-        // Note: a timestamp is added to bypass browser cache.
-        new Image().src = url + "&t=" + new Date().getTime();
-    } else {
-        var xmlHttp = new XMLHttpRequest();
-        xmlHttp.open( "GET", url, true ); // true for asynchronous request
-        xmlHttp.send( null ); // Fire and forget (no callback). Might be good to handle errors at some point
-    }
+  var url = freebox_hd_rc_url + "?code=" + getCode() + "&key=" + key;
+  if (long)
+    url += "&long=true";
+  if (window.location.protocol != "https:") {
+    // Need to send a HTTP request (Freebox V5 API does not support HTTPS) from a HTTPS site, which is bad
+    // and blocked by the brower. A hackish workaround is to send a GET request using image loading. This
+    // prevents Mixed-Content request from being blocked by the browser.
+    // This hack does not work anymore with Chrome 81+
+    // Note: a timestamp is added to bypass browser cache.
+    new Image().src = url + "&t=" + new Date().getTime();
+  } else {
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open( "GET", url, true ); // true for asynchronous request
+    xmlHttp.send( null ); // Fire and forget (no callback). Might be good to handle errors at some point
+  }
 }
 
 // Buffer for storage of multiple numeric keys pressed rapidely (ex: channel 14)
@@ -126,13 +128,15 @@ var rapidKeyPressTimeout;
 
 // Send a numeric key. If several keys are pressed rapidely, they are stored in a buffer before being sent to the multimedia device
 function sendNumericKey(key) {
+  if (window.navigator.vibrate) {
     window.navigator.vibrate(vibration_duration); // haptic feedback
-    // Storage of the key in the buffer
-    rapidKeyPressBuffer = rapidKeyPressBuffer + key;
-    // Cancellation of previous timeout
-    window.clearTimeout(rapidKeyPressTimeout);
-    // New timeout to send buffered keys after the delay is reached
-    rapidKeyPressTimeout = window.setTimeout(sendrapidKeyPressBuffer, rapidKeyPressInterval);
+  }
+  // Storage of the key in the buffer
+  rapidKeyPressBuffer = rapidKeyPressBuffer + key;
+  // Cancellation of previous timeout
+  window.clearTimeout(rapidKeyPressTimeout);
+  // New timeout to send buffered keys after the delay is reached
+  rapidKeyPressTimeout = window.setTimeout(sendrapidKeyPressBuffer, rapidKeyPressInterval);
 }
 
 // Send the buffer of stored numeric keys to the multimedia device
