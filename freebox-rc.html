@@ -102,14 +102,19 @@ function sendKey(key) {
 function sendRequest(key, long) {
     var url = freebox_hd_rc_url + "?code=" + getCode() + "&key=" + key;
     if (long)
-      url += "&long=true";
-    // Hackish way to send a GET request and prevent Mixed-Content request from being blocked by the browser
-    // This hack does not work anymore with Chrome 81+
-    // Note: a timestamp is added to bypass browser cache.
-    new Image().src = url + "&t=" + new Date().getTime();
-    //var xmlHttp = new XMLHttpRequest();
-    //xmlHttp.open( "GET", url, true ); // true for asynchronous request
-    //xmlHttp.send( null ); // Fire and forget (no callback)
+        url += "&long=true";
+    if (window.location.protocol != "https:") {
+        // Need to send a HTTP request (Freebox V5 API does not support HTTPS) from a HTTPS site, which is bad
+        // and blocked by the brower. A hackish workaround is to send a GET request using image loading. This
+        // prevents Mixed-Content request from being blocked by the browser.
+        // This hack does not work anymore with Chrome 81+
+        // Note: a timestamp is added to bypass browser cache.
+        new Image().src = url + "&t=" + new Date().getTime();
+    } else {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open( "GET", url, true ); // true for asynchronous request
+        xmlHttp.send( null ); // Fire and forget (no callback). Might be good to handle errors at some point
+    }
 }
 
 // Buffer for storage of multiple numeric keys pressed rapidely (ex: channel 14)
