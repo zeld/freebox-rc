@@ -145,8 +145,9 @@ function sendRequest(key, long) {
 
 // Buffer for storage of multiple numeric keys pressed rapidely (ex: channel 14)
 var rapidKeyPressBuffer = "";
-// Maximum inverval between two rapid key press. After this delay all stored key pressed are sent to multimedia device.
-var rapidKeyPressInterval = 500;
+// Maximum inverval between two rapid key press (in ms). After this delay all stored key pressed are sent to multimedia device.
+// 500 ms is rather small, user needs to be quite fast.
+var rapidKeyPressInterval = 1000;
 // Timeout for sending stored keys
 var rapidKeyPressTimeout;
 
