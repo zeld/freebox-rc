@@ -14,6 +14,6 @@ Only the keys that I use on semi-regularly basis are implemented. There is no pl
 
 The project is deployed on Github Pages here: https://zeld.github.io/freebox-rc/freebox-rc.html
 
-As Github pages requires HTTPS and the Freebox API is only available as HTTP only (for Freebox V5), the site is broken on Chrome based browsers (Mixed Content requests are completely blocked for security reasons since Chrome 81). As of current writing, it still works in Firefox (89).
+As Github pages requires HTTPS and the Freebox API is only available as HTTP only (for Freebox V5), the site is broken on Chrome based browsers (Mixed Content requests are completely blocked for security reasons since Chrome 81). As of current writing, it still works in Firefox (89) and Safari.
 
 
