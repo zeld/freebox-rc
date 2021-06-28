@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <title>Télécommande Freebox V5</title>
 <style>
+/* Use all available space */
 body {
   width: 100%;
   margin: 0;
@@ -11,9 +12,9 @@ body {
 }
 table {
   width: 100%;
-  background-color: #b3b6b7;
   margin: 0;
   padding: 0;
+  border-collapse: collapse;
 }
 tr {
   height: 8em;
@@ -26,26 +27,49 @@ td {
   font-size: 5em;
   text-align: center;
   color: white;
-  width: 33.33%;
+  background-color: #b3b6b7;
+  width: 33.33%; /* 3 buttons per line */
 }
+td[onclick]:active {
+  background-color: #c3c6c7;
+}
+/* Red remote control button */
 td.red {
   background: #a93226;
 }
+td.red:active {
+  background-color: #b94236;
+}
+/* Green remote control button */
 td.green {
   background: #229954;
 }
+td.green:active {
+  background: #32a964;
+}
+/* Yellow remote control button */
 td.yellow {
   background: #d4ac0d;
 }
+td.yellow:active {
+  background: #e4bc1d;
+}
+/* Blue remote control button */
 td.blue {
   background: #2e86c1;
 }
+td.blue:active {
+  background: #3e96d1;
+}
+/* "Home" remote control button */
 td.home {
   color: #a93226;
 }
+/* Remote control button with full text caption */
 td.caption {
   font-size: 3em;
 }
+/* Power control button */
 td.power {
   color: #a93226;
 }
