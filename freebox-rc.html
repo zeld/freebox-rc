@@ -16,6 +16,7 @@ table {
   padding: 0;
   border-collapse: collapse;
 }
+  /* Ensure a miminum and constant line height that allows to display correctly all butonns */
 tr {
   height: 8em;
 }
@@ -121,6 +122,9 @@ function sendKey(key) {
   sendRequest(key, false);
 }
 
+// Unique token to bypass image caching by the broser in hack for Mixed-Content requests (see sendRequest() below)
+var uniqueRequestToken = new Date().getTime();
+  
 // Send a virtual key to the mutimedia device using a HTTP request
 // Parameters
 // - key code
@@ -135,7 +139,8 @@ function sendRequest(key, long) {
     // prevents Mixed-Content request from being blocked by the browser.
     // This hack does not work anymore with Chrome 81+
     // Note: a timestamp is added to bypass browser cache.
-    new Image().src = url + "&t=" + new Date().getTime();
+    new Image().src = url + "&t=" + uniqueRequestToken;
+    uniqueRequestToken++;
   } else {
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.open( "GET", url, true ); // true for asynchronous request
