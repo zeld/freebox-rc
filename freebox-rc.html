@@ -76,10 +76,8 @@ td.power {
 }
 </style>
 <script>
-// Documentation of freebox virtual remote control HTTP API:
+// Documentation of the virtual remote control HTTP API for freebox V5 is available on this dev ticket:
 // - https://dev.freebox.fr/bugs/task/4327
-// - https://dev.freebox.fr/bugs/task/10156
-// - https://dev.freebox.fr/bugs/task/30276
 // Note: this API is deprecated
 
 // URL of freebox multimedia devise (HD1)
@@ -88,8 +86,8 @@ var freebox_hd_rc_url="http://hd1.freebox.fr/pub/remote_control"; // HTTPS not a
 // Duration of vibration feedback on key pressed on mobile device
 var vibration_duration = 10; // in ms
 
-// Configuration of the remote control code
-// The code is stored as is (in clear) in browser local cache (localStorage)
+// Configuration of the remote control security code
+// The security code is stored as is (in clear) in browser local cache (localStorage)
 function configureCode() {
   var localStorage = window.localStorage;
   var oldCode = localStorage.getItem("code");
@@ -101,7 +99,7 @@ function configureCode() {
     localStorage.setItem("code", newCode);
 }
 
-// Retrieval of configured remote controle code
+// Retrieval of configured remote controle security code
 function getCode() {
   var localStorage = window.localStorage;
   var code = localStorage.getItem("code");
@@ -130,7 +128,10 @@ var uniqueRequestToken = new Date().getTime();
 // - key code
 // - flag for long press (optionel)
 function sendRequest(key, long) {
-  var url = freebox_hd_rc_url + "?code=" + getCode() + "&key=" + key;
+  // Retrieve configured security code
+  var securityCode = getCode();
+  // Build URL to call with key code and long-press flag
+  var url = freebox_hd_rc_url + "?code=" + securityCode + "&key=" + key;
   if (long)
     url += "&long=true";
   if (window.location.protocol == "https:") {
@@ -156,7 +157,8 @@ var rapidKeyPressInterval = 1000;
 // Timeout for sending stored keys
 var rapidKeyPressTimeout;
 
-// Send a numeric key. If several keys are pressed rapidely, they are stored in a buffer before being sent to the multimedia device
+// Send a numeric key to the multimedia device
+// If several keys are pressed rapidely, they are stored in a buffer before being sent to the multimedia device
 function sendNumericKey(key) {
   if (window.navigator.vibrate) {
     window.navigator.vibrate(vibration_duration); // haptic feedback
@@ -186,25 +188,13 @@ function sendrapidKeyPressBuffer() {
 </head>
 <body>
 <!--
-Non-implemented keys:
+Non-implemented virtual keys (rarely used):
 - tv: switch peritel
-- back: touche retour jaune (effacement)
-- mail: messagerie
-- pip: incrustation video
-- media
+- back: yellow backward/delete
+- mail: voice mail
+- pip: video incrustation - what use on V5?
+- media: what use on V5?
 - help
-Keys added afterwards?
-- start
-- select
-- replay
-- vod
-- whatson
-- records
-- media
-- youtube
-- radios
-- canalvod
-- netflix
 -->
 <table>
  <tr>
