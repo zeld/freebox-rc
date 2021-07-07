@@ -4,7 +4,7 @@ This project is a simple virtual remote control for Freebox V5 (HD).
 
 It uses the deprecated HTTP API described here: https://dev.freebox.fr/bugs/task/4327
 
-It consists in a single web page that should work on any browser, on desktop or mobile devices - provided the web page is hosted as HTTP or accessed locally.
+It consists in a single web page that should work on any browser, on desktop or mobile devices - provided the web page is hosted as HTTP or accessed locally (there are known issues with HTTPS hosting that are descibed below in the Security concerns section)
 
 Only the keys that I use on semi-regularly basis are implemented. There is no plan to implement other keys.
 
