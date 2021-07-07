@@ -14,6 +14,7 @@ The API requires a security code for the remote control that is stored in the br
 If the web page is deployed as HTTPS there are known incompatibilities with Chrome based browsers as:
 - The Freebox API is only available as HTTP (for Freebox V5) - and not HTTPS
 - Chrome blocks all Mixed Content requests for security reasons - since version 81
+
 A workaround is implemented to bypass this block on other browsers, but it's probably only a matter of time until those browsers completely block Mixed Content requests the same way Chrome does. As of current writing, the workaround still works in Firefox (89) and Safari.
 
 ## Website
