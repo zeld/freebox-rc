@@ -2,7 +2,7 @@
 
 This project is a minimalistic virtual remote control for Freebox V5 (HD).
 
-It uses the deprecated [Freebox remote control HTTP API](https://dev.freebox.fr/bugs/task/4327) to send simple HTTP requests to the Frebbox HD device: `GET http://hd1.freebox.fr/pub/remote_control?code=<security_code>&key=<remote_control_key>`
+It uses the deprecated [Freebox remote control HTTP API](https://dev.freebox.fr/bugs/task/4327) to send simple HTTP requests to the Freebox HD device: `GET http://hd1.freebox.fr/pub/remote_control?code=<security_code>&key=<remote_control_key>`
 
 The projects consists in a single Web page that should work on any browser, on desktop or mobile devices - although there are known issues with HTTPS hosting that are descibed below, due to the limitations of the Freebox V5 API.
 
